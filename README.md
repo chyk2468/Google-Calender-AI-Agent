@@ -1,83 +1,45 @@
-# 📅 Google Calendar AI Assistant
+# Google Calendar AI Assistant
 
-An AI-powered scheduling assistant that helps you manage your Google Calendar using natural language. Built with Streamlit and powered by Groq's Llama 3.3 70B model.
+A Streamlit scheduling assistant that uses natural-language instructions to list, create, and delete Google Calendar events. It includes a confirmation step for event creation and supports follow-up requests using recent context.
 
-## 🚀 Features
+**Stack:** Python, Streamlit, Groq/Llama, Google Calendar API, OAuth2
 
-- **Natural Language Commands**: Just type what you want to do (e.g., "Schedule a meeting with HR tomorrow at 2 PM").
-- **Event Management**:
-    - **List Events**: View your upcoming schedule.
-    - **Create Events**: Add new events with a confirmation step to ensure accuracy.
-    - **Delete Events**: Remove events by title or keywords.
-- **Batch Processing**: Create multiple events in a single request.
-- **Intelligent Context**: Remembers recent events to handle follow-up commands like "Delete that meeting".
-- **Modern UI**: Clean and responsive interface built with Streamlit.
+![Google Calendar Assistant workflow](docs/readme-architecture.svg)
 
-## 🛠️ Tech Stack
+## What it does
 
-- **Frontend**: [Streamlit](https://streamlit.io/)
-- **LLM Engine**: [Groq Cloud](https://groq.com/) (Llama-3.3-70b-versatile)
-- **API**: [Google Calendar API](https://developers.google.com/calendar)
-- **Language**: Python 3.x
+- Lists upcoming events.
+- Creates events after confirmation.
+- Deletes events by title or keywords.
+- Supports multiple event requests in a single interaction.
+- Keeps recent context for follow-up commands.
 
-## 📋 Prerequisites
+## Project map
 
-Before running the application, you'll need:
+- `app.py`: interface
+- `agent.py`: natural-language routing
+- `actions.py`: event operations
+- `calendar_client.py`: Calendar API wrapper
+- `auth.py`: OAuth2 and token refresh
+- `.env.example`: expected environment variable template, if present
 
-1.  **Groq API Key**: Get it from the [Groq Console](https://console.groq.com/).
-2.  **Google Cloud Project**:
-    -   Create a project in the [Google Cloud Console](https://console.cloud.google.com/).
-    -   Enable the **Google Calendar API**.
-    -   Configure the **OAuth Consent Screen** (Internal/External).
-    -   Create **OAuth 2.0 Client IDs** (Desktop App).
-    -   Download the JSON file and rename it to `credentials.json`.
+## Run locally
 
-## ⚙️ Installation
+```bash
+git clone https://github.com/chyk2468/Google-Calender-AI-Agent.git
+cd Google-Calender-AI-Agent
+python -m venv .venv
+```
 
-1.  **Clone the repository**:
-    ```bash
-    git clone <repository-url>
-    cd <repository-folder>
-    ```
+Activate the environment, install dependencies, and configure the Groq key and Google OAuth credentials required by the app:
 
-2.  **Install dependencies**:
-    ```bash
-    pip install -r requirements.txt
-    ```
+```bash
+pip install -r requirements.txt
+streamlit run app.py
+```
 
-3.  **Configure Environment Variables**:
-    Create a `.env` file in the root directory and add your Groq API key:
-    ```env
-    GROQ_API_KEY=your_groq_api_key_here
-    ```
+Use Google's OAuth flow to grant the minimum calendar permissions required by your use case. Never commit client secrets or refresh tokens.
 
-4.  **Add Google Credentials**:
-    Place your `credentials.json` file in the root directory.
+## Before applying changes
 
-## 🏃 Usage
-
-1.  **Start the application**:
-    ```bash
-    streamlit run app.py
-    ```
-
-2.  **Authenticate**:
-    On the first run, a browser window will open asking you to log in to your Google account and grant permissions. A `token.json` file will be created to store your session.
-
-3.  **Interact with the AI**:
-    -   "What do I have planned for today?"
-    -   "Schedule a coffee chat with Sarah on Friday at 10 AM and a gym session at 6 PM."
-    -   "Delete the gym session."
-
-## 📂 Project Structure
-
-- `app.py`: The main Streamlit application and UI logic.
-- `agent.py`: AI agent logic using Groq to parse natural language into structured actions.
-- `actions.py`: Handles the execution of actions (create, list, delete) against the Google Calendar.
-- `calendar_client.py`: Wrapper for the Google Calendar API service.
-- `auth.py`: Manages OAuth2 authentication and token refreshing.
-- `requirements.txt`: List of required Python packages.
-
-## 📝 License
-
-This project is open-source. Feel free to contribute!
+Check the intended calendar, date, local time zone, and event identity. Treat generated time details as a proposal until confirmed.
